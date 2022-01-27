@@ -1,20 +1,48 @@
+"""Gendiff Module."""
+
 import json
 
 
+def read_file(path):
+    """
+    Read file.
+
+    Args:
+        path: str
+
+    Returns:
+        dict
+    """
+    with open(path) as filename:
+        return json.load(filename)
+
+
 def generate_diff(first_file, second_file):
-    first = json.load(open(first_file))
-    second = json.load(open(second_file))
+    """
+    Generate diff between two JSON files.
 
-    uniq_keys = sorted(first.keys() | second.keys())
+    Args:
+        first_file: str
+        second_file: str
 
-    def build(key):
-        if not key in second:
-            return f' - {key}: {first[key]}'
-        if not key in first:
-            return f' + {key}: {second[key]}'
-        if first[key] == second[key]:
-            return f'   {key}: {first[key]}'
+    Returns:
+        str
+    """
+    first = read_file(first_file)
+    second = read_file(second_file)
 
-        return f' - {key}: {first[key]}\n  + {key}: {second[key]}'
+    diff = []
 
-    return '{\n ' + '\n '.join(map(build, uniq_keys)) + '\n}'
+    for key in sorted(first.keys() | second.keys()):
+        if key not in second:
+            diff.append(' - {0}: {1}'.format(key, first[key]))
+        elif key not in first:
+            diff.append(' + {0}: {1}'.format(key, second[key]))
+        elif first[key] == second[key]:
+            diff.append('   {0}: {1}'.format(key, first[key]))
+        else:
+            diff.append(' - {0}: {1}\n  + {0}: {2}'.format(
+                key, first[key], second[key],
+            ))
+
+    return '{{\n {0}\n}}'.format('\n '.join(diff))
