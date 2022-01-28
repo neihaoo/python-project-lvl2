@@ -10,6 +10,7 @@
 - [Install](#Install)
 - [Usage](#Usage)
   - [JSON](#JSON)
+  - [YAML](#YAML)
 
 ## Install
 
@@ -28,3 +29,11 @@ $ gendiff first_file.json second_file.json
 ```
 
 [![asciicast](https://asciinema.org/a/dsiDkKVqfohcQAL5QnNY9RzX0.svg)](https://asciinema.org/a/dsiDkKVqfohcQAL5QnNY9RzX0)
+
+### YAML
+
+```sh
+$ gendiff first_file.yaml second_file.yaml
+```
+
+[![asciicast](https://asciinema.org/a/oI4d51XCk4P7ayh6dWZsKe6LR.svg)](https://asciinema.org/a/oI4d51XCk4P7ayh6dWZsKe6LR)

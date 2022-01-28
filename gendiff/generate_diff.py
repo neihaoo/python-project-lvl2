@@ -1,11 +1,13 @@
 """Gendiff Module."""
 
-import json
+import os
+
+from gendiff.parsers import parse as parse_file
 
 
-def read_file(path):
+def prepare_file(path):
     """
-    Read file.
+    Prepare input file.
 
     Args:
         path: str
@@ -14,7 +16,9 @@ def read_file(path):
         dict
     """
     with open(path) as filename:
-        return json.load(filename)
+        _, extension = os.path.splitext(path)
+
+        return parse_file(filename, extension[1:])
 
 
 def generate_diff(first_file, second_file):
@@ -28,8 +32,8 @@ def generate_diff(first_file, second_file):
     Returns:
         str
     """
-    first = read_file(first_file)
-    second = read_file(second_file)
+    first = prepare_file(first_file)
+    second = prepare_file(second_file)
 
     diff = []
 

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hexlet-code"
-version = "0.2.0"
+version = "0.3.0"
 description = "Gendiff (Hexlet Python Project Level 2)"
 authors = ["neihaoo <neihaoo@gmail.com>"]
 repository = "https://github.com/neihaoo/python-project-lvl2"
@@ -10,6 +10,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.9"
+PyYAML = "^6.0"
 
 [tool.poetry.dev-dependencies]
 wemake-python-styleguide = "^0.16.0"
