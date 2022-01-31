@@ -2,6 +2,8 @@
 
 import os
 
+from gendiff.build_ast import build_ast
+from gendiff.formaters.formaters import render
 from gendiff.parsers import parse as parse_file
 
 
@@ -21,32 +23,20 @@ def prepare_file(path):
         return parse_file(filename, extension[1:])
 
 
-def generate_diff(first_file, second_file):
+def generate_diff(first_file, second_file, style='stylish'):
     """
-    Generate diff between two JSON files.
+    Generate diff between two files.
 
     Args:
         first_file: str
         second_file: str
+        style: str
 
     Returns:
         str
     """
     first = prepare_file(first_file)
     second = prepare_file(second_file)
+    ast = build_ast(first, second)
 
-    diff = []
-
-    for key in sorted(first.keys() | second.keys()):
-        if key not in second:
-            diff.append(' - {0}: {1}'.format(key, first[key]))
-        elif key not in first:
-            diff.append(' + {0}: {1}'.format(key, second[key]))
-        elif first[key] == second[key]:
-            diff.append('   {0}: {1}'.format(key, first[key]))
-        else:
-            diff.append(' - {0}: {1}\n  + {0}: {2}'.format(
-                key, first[key], second[key],
-            ))
-
-    return '{{\n {0}\n}}'.format('\n '.join(diff))
+    return render(ast, style)

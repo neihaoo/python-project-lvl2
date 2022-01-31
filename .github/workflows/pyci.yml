@@ -1,8 +1,6 @@
 name: Python CI
 
-on:
-  - push
-  - pull_request
+on: push
 
 jobs:
   build:
@@ -21,12 +19,11 @@ jobs:
           pip install poetry
           make install
       - name: Run linter and pytest
-        run: |
-          make check
+        run: make check
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v3.0.0
         env:
-          CC_TEST_REPORTER_ID: ba4c688a04b04ebff74e7c90f56288ee1d4824e530503dd5c3c3fb2c16170b30
+          CC_TEST_REPORTER_ID: 1682db8956e3c04183526bbecaa796d23f7363bff23a6ffe4d3c03cc02d54968
         with:
           coverageCommand: make test-coverage
           debug: true
