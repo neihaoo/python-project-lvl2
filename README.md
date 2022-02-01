@@ -37,6 +37,12 @@ $ gendiff --format plain first_file.json second_file.json
 
 [![asciicast](https://asciinema.org/a/iWbqam1l9FpIswBo3fX3kB0DQ.svg)](https://asciinema.org/a/iWbqam1l9FpIswBo3fX3kB0DQ)
 
+```sh
+$ gendiff --format json first_file.json second_file.json
+```
+
+[![asciicast](https://asciinema.org/a/F5BNe5vyWIaRKnphb12xErkGV.svg)](https://asciinema.org/a/F5BNe5vyWIaRKnphb12xErkGV)
+
 ### YAML
 
 ```sh
@@ -51,3 +57,9 @@ $ gendiff --format plain first_file.yaml second_file.yaml
 ```
 
 [![asciicast](https://asciinema.org/a/g4yVKBwzuVQexJnZCSUPELdcd.svg)](https://asciinema.org/a/g4yVKBwzuVQexJnZCSUPELdcd)
+
+```sh
+$ gendiff --format json first_file.yaml second_file.yaml
+```
+
+[![asciicast](https://asciinema.org/a/rATFi3LYLXVDfIqSTIK66ylFD.svg)](https://asciinema.org/a/rATFi3LYLXVDfIqSTIK66ylFD)

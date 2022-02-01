@@ -47,11 +47,13 @@ def build_ast(first, second):
         second: dict
 
     Returns:
-        map
+        list
     """
     uniq_keys = sorted(first.keys() | second.keys())
 
-    return map(
+    ast = map(
         lambda key: build_ast_node(key, first, second, build_ast),
         uniq_keys,
     )
+
+    return list(ast)

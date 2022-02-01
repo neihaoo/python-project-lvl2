@@ -9,10 +9,13 @@ DIR_PATH = os.path.dirname(__file__)
 test_data = [
     ('json', 'stylish'),
     ('json', 'plain'),
+    ('json', 'json'),
     ('yaml', 'stylish'),
     ('yaml', 'plain'),
+    ('yaml', 'json'),
     ('yml', 'stylish'),
     ('yml', 'plain'),
+    ('yml', 'json'),
 ]
 
 
