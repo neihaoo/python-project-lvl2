@@ -1,18 +1,21 @@
 """Gendiff Formaters Module."""
 
+from gendiff.formaters.plain_formater import render as plain_render
 from gendiff.formaters.stylish_formater import render as stylish_render
 
 
-def render(ast, style='stylish'):
+def render(ast, format_name='stylish'):
     """
-    Кeturn the formatter based on the specified style.
+    Кeturn the formatter based on the specified format.
 
     Args:
         ast: dict
-        style: str
+        format_name: str
 
     Returns:
         fn
     """
-    if style == 'stylish':
+    if format_name == 'stylish':
         return stylish_render(ast, 1)
+    if format_name == 'plain':
+        return plain_render(ast, '')

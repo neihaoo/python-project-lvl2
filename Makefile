@@ -15,7 +15,10 @@ selfcheck:
 
 check: selfcheck test lint
 
-build: check
+clean:
+	rm -rf dist
+
+build: check clean
 	poetry build
 
 package-install: build

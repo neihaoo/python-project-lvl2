@@ -16,7 +16,7 @@ def main():
         '-f',
         '--format',
         help='set format of output',
-        choices=['stylish'],
+        choices=['stylish', 'plain'],
         default='stylish',
     )
 

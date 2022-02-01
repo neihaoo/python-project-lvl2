@@ -23,14 +23,14 @@ def prepare_file(path):
         return parse_file(filename, extension[1:])
 
 
-def generate_diff(first_file, second_file, style='stylish'):
+def generate_diff(first_file, second_file, format_name='stylish'):
     """
     Generate diff between two files.
 
     Args:
         first_file: str
         second_file: str
-        style: str
+        format_name: str
 
     Returns:
         str
@@ -39,4 +39,4 @@ def generate_diff(first_file, second_file, style='stylish'):
     second = prepare_file(second_file)
     ast = build_ast(first, second)
 
-    return render(ast, style)
+    return render(ast, format_name)

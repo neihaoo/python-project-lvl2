@@ -1,4 +1,6 @@
-"""Gendiff Formaters Modul."""
+"""Gendiff Stylish Formater Module."""
+
+from gendiff.formaters.common import transform_value
 
 
 def set_indent(depth=0):
@@ -12,24 +14,6 @@ def set_indent(depth=0):
         str
     """
     return '  ' * depth
-
-
-def transform_value(node_value):
-    """
-    Transfom boolen and None values to string.
-
-    Args:
-        node_value: any
-
-    Returns:
-        str
-    """
-    if isinstance(node_value, bool):
-        return str(node_value).lower()
-    if node_value is None:
-        return 'null'
-
-    return str(node_value)
 
 
 def stringify(node_data, depth):
