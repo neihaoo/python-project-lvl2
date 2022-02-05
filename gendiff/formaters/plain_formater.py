@@ -13,16 +13,13 @@ def stringify(node_data):
     Returns:
         str
     """
-    processed_data = (
-        "'{0}'".format(node_data)
-        if isinstance(node_data, str)
-        else node_data
-    )
+    if isinstance(node_data, str):
+        return "'{0}'".format(node_data)
 
     return (
         '[complex value]'
         if isinstance(node_data, dict)
-        else transform_value(processed_data)
+        else transform_value(node_data)
     )
 
 

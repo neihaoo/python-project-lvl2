@@ -3,7 +3,7 @@
 import os
 
 from gendiff.build_ast import build_ast
-from gendiff.formaters.formaters import render
+from gendiff.formaters.render import render
 from gendiff.parsers import parse as parse_file
 
 

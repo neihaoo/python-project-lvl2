@@ -1,5 +1,7 @@
 """Gendiff Stylish Formater Module."""
 
+import itertools
+
 from gendiff.formaters.common import transform_value
 
 
@@ -30,21 +32,25 @@ def stringify(node_data, depth):
     if not isinstance(node_data, dict):
         return transform_value(node_data)
 
+    current_indent = set_indent(depth + 1)
+    deep_indent_depth = depth + 2
+    deep_indent = set_indent(deep_indent_depth + 1)
+
     processed_data = map(
         lambda data_key, data_value: '{0}{1}: {2}'.format(
-            set_indent(depth - 3), data_key, stringify(data_value, depth + 2),
-        )
-        if isinstance(data_value, dict)
-        else '{0}: {1}'.format(data_key, (transform_value(data_value))),
+            deep_indent, data_key, stringify(data_value, deep_indent_depth),
+        ),
         node_data.keys(),
         node_data.values(),
     )
 
-    return '{{\n{0}{1}\n{2}}}'.format(
-        set_indent(depth + 3),
-        '\n        '.join(processed_data),
-        set_indent(depth + 1),
+    output = itertools.chain(
+        '{',
+        processed_data,
+        ['{0}{1}'.format(current_indent, '}')],
     )
+
+    return '\n'.join(output)
 
 
 def format_node(node_key, node_value, depth=0, mark=''):
