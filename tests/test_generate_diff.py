@@ -1,7 +1,7 @@
 import os
 import pytest
 
-from gendiff.generate_diff import generate_diff
+from gendiff import generate_diff
 
 
 DIR_PATH = os.path.dirname(__file__)
