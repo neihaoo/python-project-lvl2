@@ -1,12 +1,14 @@
 """Gendiff Common Formaters Module."""
 
+from typing import Union
 
-def transform_value(node_value):
+
+def transform_value(node_value: Union[str, int, bool, None]) -> str:
     """
-    Transfom boolen and None values to string.
+    Transfom input values to string.
 
     Args:
-        node_value: any
+        node_value: str | int | bool | None
 
     Returns:
         str

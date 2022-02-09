@@ -1,9 +1,12 @@
 [tool.poetry]
 name = "hexlet-code"
-version = "0.7.0"
+version = "0.7.1"
 description = "Gendiff (Hexlet Python Project Level 2)"
 authors = ["neihaoo <neihaoo@gmail.com>"]
 repository = "https://github.com/neihaoo/python-project-lvl2"
+classifiers = [
+  "Topic :: Utilities"
+]
 packages = [
   { include = "gendiff" },
 ]

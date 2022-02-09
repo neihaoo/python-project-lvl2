@@ -5,8 +5,21 @@ import json
 from gendiff.formaters.plain_formater import render as plain_render
 from gendiff.formaters.stylish_formater import render as stylish_render
 
+JSON = 'json'
+PLAIN = 'plain'
+STYLISH = 'stylish'
 
-def render(ast, format_name='stylish'):
+formats = {
+    JSON: json.dumps,
+    PLAIN: lambda tree: plain_render(tree, ''),
+    STYLISH: lambda tree: stylish_render(tree, 1),
+}
+
+
+def render(
+    ast: list,
+    format_name: str = STYLISH,
+) -> str:
     """
     Кeturn the formatter based on the specified format.
 
@@ -15,11 +28,6 @@ def render(ast, format_name='stylish'):
         format_name: str
 
     Returns:
-        fn
+        str
     """
-    if format_name == 'stylish':
-        return stylish_render(ast, 1)
-    if format_name == 'plain':
-        return plain_render(ast, '')
-    if format_name == 'json':
-        return json.dumps(ast)
+    return formats[format_name](ast)

@@ -1,11 +1,17 @@
 """Gendiff Stylish Formater Module."""
 
 import itertools
+from typing import Callable, Union
 
 from gendiff.formaters.common import transform_value
 
+ADDED = 'added'
+DELETED = 'deleted'
+NESTED = 'nested'
+UNCHENGED = 'unchanged'
 
-def set_indent(depth=0):
+
+def set_indent(depth: int = 0) -> str:
     """
     Set indent.
 
@@ -18,12 +24,12 @@ def set_indent(depth=0):
     return '  ' * depth
 
 
-def stringify(node_data, depth):
+def stringify(node_data: Union[str, int, bool, None, dict], depth: int) -> str:
     """
     Stringify data.
 
     Args:
-        node_data: any
+        node_data: str | int | bool | None | dict
         depth: int
 
     Returns:
@@ -38,7 +44,9 @@ def stringify(node_data, depth):
 
     processed_data = map(
         lambda data_key, data_value: '{0}{1}: {2}'.format(
-            deep_indent, data_key, stringify(data_value, deep_indent_depth),
+            deep_indent,
+            data_key,
+            stringify(data_value, deep_indent_depth),
         ),
         node_data.keys(),
         node_data.values(),
@@ -53,9 +61,14 @@ def stringify(node_data, depth):
     return '\n'.join(output)
 
 
-def format_node(node_key, node_value, depth=0, mark=''):
+def format_node(
+    node_key: str,
+    node_value: Union[str, int, bool, None, dict],
+    depth: int = 0,
+    mark: str = '',
+) -> str:
     """
-    Farnat data to string.
+    Format data to string.
 
     Args:
         node_key: str
@@ -67,11 +80,18 @@ def format_node(node_key, node_value, depth=0, mark=''):
         str
     """
     return '{0}{1} {2}: {3}'.format(
-        set_indent(depth), mark, node_key, stringify(node_value, depth),
+        set_indent(depth),
+        mark,
+        node_key,
+        stringify(node_value, depth),
     )
 
 
-def get_action_by_type(node, depth, function):
+def get_action_by_type(
+    node: dict,
+    depth: int,
+    function: Callable[[list, int], str],
+) -> str:
     """
     Transform node based on node's type.
 
@@ -81,36 +101,38 @@ def get_action_by_type(node, depth, function):
         function: fn
 
     Returns:
-        map
+        str
     """
-    node_type = node.get('type')
-    node_name = node.get('name')
+    node_type = node['type']
+    node_name = node['name']
 
-    if node_type == 'nested':
+    if node_type == NESTED:
         return '  {0}{1}: {2}'.format(
             set_indent(depth),
             node_name,
             function(node['children'], depth + 2),
         )
-    if node_type == 'deleted':
+    if node_type == DELETED:
         return format_node(node_name, node['value'], depth, '-')
-    if node_type == 'added':
+    if node_type == ADDED:
         return format_node(node_name, node['value'], depth, '+')
-    if node_type == 'unchanged':
+    if node_type == UNCHENGED:
         return format_node(node_name, node['value'], depth, ' ')
-    if node_type == 'changed':
-        return '\n'.join([
+
+    return '\n'.join(
+        [
             format_node(node_name, node['value_before'], depth, '-'),
             format_node(node_name, node['value_after'], depth, '+'),
-        ])
+        ],
+    )
 
 
-def render(ast, depth=0):
+def render(ast: list, depth: int = 0) -> str:
     """
     Render AST to string.
 
     Args:
-        ast: map
+        ast: list
         depth: int
 
     Returns:

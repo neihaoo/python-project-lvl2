@@ -28,7 +28,7 @@ def read_file(filename):
 
 
 @pytest.mark.parametrize('extension, format_name', test_data)
-def test_gendiff(extension, format_name):
+def test_generate_diff(extension, format_name):
     first_file = get_fixture_path('first_file.{0}'.format(extension))
     second_file = get_fixture_path('second_file.{0}'.format(extension))
 

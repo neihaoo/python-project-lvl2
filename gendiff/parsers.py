@@ -4,8 +4,13 @@ import json
 
 import yaml
 
+parsers = {
+    'json': json.loads,
+    'yaml': yaml.safe_load,
+}
 
-def parse(path, extension):
+
+def parse(path: str, extension: str) -> dict:
     """
     Parse input files.
 
@@ -17,6 +22,6 @@ def parse(path, extension):
         dict
     """
     if extension in {'yaml', 'yml'}:
-        return yaml.safe_load(path)
-    if extension == 'json':
-        return json.load(path)
+        extension = 'yaml'
+
+    return parsers[extension](path)

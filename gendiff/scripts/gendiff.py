@@ -6,6 +6,10 @@ import argparse
 
 from gendiff.generate_diff import generate_diff
 
+JSON = 'json'
+PLAIN = 'plain'
+STYLISH = 'stylish'
+
 
 def main():
     """Run Gendiff script."""
@@ -16,8 +20,8 @@ def main():
         '-f',
         '--format',
         help='set format of output',
-        choices=['stylish', 'plain', 'json'],
-        default='stylish',
+        choices=[STYLISH, PLAIN, JSON],
+        default=STYLISH,
     )
 
     args = parser.parse_args()

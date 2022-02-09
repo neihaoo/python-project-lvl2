@@ -1,7 +1,20 @@
 """Gendiff AST Module."""
 
+from typing import Callable
 
-def build_ast_node(key, first_dict, second_dict, function):
+ADDED = 'added'
+CHANGED = 'changed'
+DELETED = 'deleted'
+NESTED = 'nested'
+UNCHENGED = 'unchanged'
+
+
+def build_ast_node(
+    key: str,
+    first_dict: dict,
+    second_dict: dict,
+    function: Callable[[dict, dict], list],
+) -> dict:
     """
     Build node for AST.
 
@@ -18,29 +31,29 @@ def build_ast_node(key, first_dict, second_dict, function):
     second_value = second_dict.get(key)
 
     if key not in second_dict:
-        return {'type': 'deleted', 'name': key, 'value': first_value}
+        return {'type': DELETED, 'name': key, 'value': first_value}
     if key not in first_dict:
-        return {'type': 'added', 'name': key, 'value': second_value}
+        return {'type': ADDED, 'name': key, 'value': second_value}
     if isinstance(first_value, dict) and isinstance(second_value, dict):
         return {
-            'type': 'nested',
+            'type': NESTED,
             'name': key,
             'children': function(first_value, second_value),
         }
     if first_value == second_value:
-        return {'type': 'unchanged', 'name': key, 'value': first_value}
+        return {'type': UNCHENGED, 'name': key, 'value': first_value}
 
     return {
-        'type': 'changed',
+        'type': CHANGED,
         'name': key,
         'value_before': first_value,
         'value_after': second_value,
     }
 
 
-def build_ast(first, second):
+def build_ast_diff(first: dict, second: dict) -> list:
     """
-    Generate diff between two dictionaries.
+    Generate AST diff between two dictionaries.
 
     Args:
         first: dict
@@ -52,7 +65,7 @@ def build_ast(first, second):
     uniq_keys = sorted(first.keys() | second.keys())
 
     ast = map(
-        lambda key: build_ast_node(key, first, second, build_ast),
+        lambda key: build_ast_node(key, first, second, build_ast_diff),
         uniq_keys,
     )
 
