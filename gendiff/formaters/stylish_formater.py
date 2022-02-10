@@ -1,36 +1,72 @@
 """Gendiff Stylish Formater Module."""
 
 import itertools
-from typing import Callable, Union
+from typing import Union
 
 from gendiff.formaters.common import transform_value
 
 ADDED = 'added'
+CHANGED = 'changed'
 DELETED = 'deleted'
 NESTED = 'nested'
 UNCHENGED = 'unchanged'
 
+types_actions = {
+    ADDED: lambda node, depth, _: format_node(
+        node['name'],
+        node['value'],
+        depth,
+        '+',
+    ),
+    CHANGED: lambda node, depth, _: '\n'.join(
+        [
+            format_node(node['name'], node['value_before'], depth, '-'),
+            format_node(node['name'], node['value_after'], depth, '+'),
+        ],
+    ),
+    DELETED: lambda node, depth, _: format_node(
+        node['name'],
+        node['value'],
+        depth,
+        '-',
+    ),
+    NESTED: lambda node, depth, function: '  {0}{1}: {2}'.format(
+        set_indent(depth),
+        node['name'],
+        function(node['children'], depth + 2),
+    ),
+    UNCHENGED: lambda node, depth, _: format_node(
+        node['name'],
+        node['value'],
+        depth,
+        ' ',
+    ),
+}
 
-def set_indent(depth: int = 0) -> str:
+
+def set_indent(indent_size: int = 0) -> str:
     """
     Set indent.
 
     Args:
-        depth: int
+        indent_size: int
 
     Returns:
         str
     """
-    return '  ' * depth
+    return '  ' * indent_size
 
 
-def stringify(node_data: Union[str, int, bool, None, dict], depth: int) -> str:
+def stringify(
+    node_data: Union[str, int, bool, None, dict],
+    indent_size: int,
+) -> str:
     """
     Stringify data.
 
     Args:
         node_data: str | int | bool | None | dict
-        depth: int
+        indent_size: int
 
     Returns:
         str
@@ -38,15 +74,15 @@ def stringify(node_data: Union[str, int, bool, None, dict], depth: int) -> str:
     if not isinstance(node_data, dict):
         return transform_value(node_data)
 
-    current_indent = set_indent(depth + 1)
-    deep_indent_depth = depth + 2
-    deep_indent = set_indent(deep_indent_depth + 1)
+    current_indent = set_indent(indent_size + 1)
+    deep_indent_size = indent_size + 2
+    deep_indent = set_indent(deep_indent_size + 1)
 
     processed_data = map(
         lambda data_key, data_value: '{0}{1}: {2}'.format(
             deep_indent,
             data_key,
-            stringify(data_value, deep_indent_depth),
+            stringify(data_value, deep_indent_size),
         ),
         node_data.keys(),
         node_data.values(),
@@ -64,7 +100,7 @@ def stringify(node_data: Union[str, int, bool, None, dict], depth: int) -> str:
 def format_node(
     node_key: str,
     node_value: Union[str, int, bool, None, dict],
-    depth: int = 0,
+    indent_size: int = 0,
     mark: str = '',
 ) -> str:
     """
@@ -72,72 +108,42 @@ def format_node(
 
     Args:
         node_key: str
-        node_value: any
-        depth: int
+        node_value: str | int | bool | None | dict
+        indent_size: int
         mark: str
 
     Returns:
         str
     """
     return '{0}{1} {2}: {3}'.format(
-        set_indent(depth),
+        set_indent(indent_size),
         mark,
         node_key,
-        stringify(node_value, depth),
+        stringify(node_value, indent_size),
     )
 
 
-def get_action_by_type(
-    node: dict,
-    depth: int,
-    function: Callable[[list, int], str],
-) -> str:
-    """
-    Transform node based on node's type.
-
-    Args:
-        node: dict
-        depth: int
-        function: fn
-
-    Returns:
-        str
-    """
-    node_type = node['type']
-    node_name = node['name']
-
-    if node_type == NESTED:
-        return '  {0}{1}: {2}'.format(
-            set_indent(depth),
-            node_name,
-            function(node['children'], depth + 2),
-        )
-    if node_type == DELETED:
-        return format_node(node_name, node['value'], depth, '-')
-    if node_type == ADDED:
-        return format_node(node_name, node['value'], depth, '+')
-    if node_type == UNCHENGED:
-        return format_node(node_name, node['value'], depth, ' ')
-
-    return '\n'.join(
-        [
-            format_node(node_name, node['value_before'], depth, '-'),
-            format_node(node_name, node['value_after'], depth, '+'),
-        ],
-    )
-
-
-def render(ast: list, depth: int = 0) -> str:
+def render(ast: list, indent_size: int = 0) -> str:
     """
     Render AST to string.
 
     Args:
         ast: list
-        depth: int
+        indent_size: int
 
     Returns:
         str
     """
-    output = map(lambda node: get_action_by_type(node, depth, render), ast)
+    output = map(
+        lambda ast_node: types_actions[ast_node['type']](
+            ast_node,
+            indent_size,
+            render,
+        ),
+        ast,
+    )
 
-    return '{{\n{0}\n{1}}}'.format('\n'.join(output), set_indent(depth - 1))
+    return '{{\n{0}\n{1}}}'.format(
+        '\n'.join(output),
+        set_indent(indent_size - 1),
+    )
