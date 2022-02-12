@@ -4,24 +4,18 @@ import json
 
 import yaml
 
+JSON = 'json'
+YAML = 'yaml'
+
 parsers = {
-    'json': json.loads,
-    'yaml': yaml.safe_load,
+    JSON: json.loads,
+    YAML: yaml.safe_load,
 }
 
 
-def parse(path: str, extension: str) -> dict:
-    """
-    Parse input files.
+def parse(file_data: str, extension: str) -> dict:
+    """Parse input data."""
+    if not parsers.get(extension):
+        raise ValueError('The {0} format is not supported.'.format(extension))
 
-    Args:
-        path: str
-        extension: str
-
-    Returns:
-        dict
-    """
-    if extension in {'yaml', 'yml'}:
-        extension = 'yaml'
-
-    return parsers[extension](path)
+    return parsers[extension](file_data)

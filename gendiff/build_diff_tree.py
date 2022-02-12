@@ -9,24 +9,13 @@ NESTED = 'nested'
 UNCHENGED = 'unchanged'
 
 
-def build_ast_node(
+def build_tree_node(
     key: str,
     first_dict: dict,
     second_dict: dict,
     function: Callable[[dict, dict], list],
 ) -> dict:
-    """
-    Build node for AST.
-
-    Args:
-        key: str
-        first_dict: dict
-        second_dict: dict
-        function: fn
-
-    Returns:
-        dict
-    """
+    """Build node for diff."""
     first_value = first_dict.get(key)
     second_value = second_dict.get(key)
 
@@ -51,21 +40,12 @@ def build_ast_node(
     }
 
 
-def build_ast_diff(first: dict, second: dict) -> list:
-    """
-    Generate AST diff between two dictionaries.
-
-    Args:
-        first: dict
-        second: dict
-
-    Returns:
-        list
-    """
+def build_diff_tree(first: dict, second: dict) -> list:
+    """Build diff between two dictionaries."""
     uniq_keys = sorted(first.keys() | second.keys())
 
     ast = map(
-        lambda key: build_ast_node(key, first, second, build_ast_diff),
+        lambda key: build_tree_node(key, first, second, build_diff_tree),
         uniq_keys,
     )
 

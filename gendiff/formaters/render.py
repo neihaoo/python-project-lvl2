@@ -1,6 +1,7 @@
 """Gendiff Formaters Module."""
 
 import json
+from typing import List
 
 from gendiff.formaters.plain_formater import render as plain_render
 from gendiff.formaters.stylish_formater import render as stylish_render
@@ -17,17 +18,8 @@ formats = {
 
 
 def render(
-    ast: list,
+    ast: List[dict],
     format_name: str = STYLISH,
 ) -> str:
-    """
-    Кeturn the formatter based on the specified format.
-
-    Args:
-        ast: dict
-        format_name: str
-
-    Returns:
-        str
-    """
+    """Return the formatter based on the specified format."""
     return formats[format_name](ast)

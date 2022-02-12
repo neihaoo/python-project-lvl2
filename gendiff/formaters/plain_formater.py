@@ -1,13 +1,9 @@
 """Gendiff Plain Formater Module."""
 
-from typing import Union
+from typing import Callable, List, Union
 
-from gendiff.formaters.common import transform_value
-
-ADDED = 'added'
-CHANGED = 'changed'
-DELETED = 'deleted'
-NESTED = 'nested'
+from gendiff.build_diff_tree import ADDED, CHANGED, DELETED, NESTED
+from gendiff.formaters.common import get_type_action, transform_value
 
 messages_templates = {
     ADDED: "Property '{0}{1}' was added with value: {2}",
@@ -15,39 +11,53 @@ messages_templates = {
     DELETED: "Property '{0}{1}' was removed",
 }
 
-types_actions = {
-    ADDED: lambda node, parent, _: messages_templates[ADDED].format(
+
+def get_added_message(node: dict, parent: str, _) -> str:
+    """Get string for added node."""
+    return messages_templates[ADDED].format(
         parent,
         node['name'],
         stringify(node['value']),
-    ),
-    CHANGED: lambda node, parent, _: messages_templates[CHANGED].format(
+    )
+
+
+def get_changed_message(node: dict, parent: str, _) -> str:
+    """Get string for changed node."""
+    return messages_templates[CHANGED].format(
         parent,
         node['name'],
         stringify(node['value_before']),
         stringify(node['value_after']),
-    ),
-    DELETED: lambda node, parent, _: messages_templates[DELETED].format(
+    )
+
+
+def get_deleted_message(node: dict, parent: str, _) -> str:
+    """Get string for deleted node."""
+    return messages_templates[DELETED].format(
         parent,
         node['name'],
-    ),
-    NESTED: lambda node, parent, function: function(
-        node['children'],
-        '{0}{1}.'.format(parent, node['name']),
-    ),
+    )
+
+
+def get_nested_message(
+    node: dict,
+    parent: str,
+    function: Callable[[List[dict], str], str],
+) -> str:
+    """Get string for nested node."""
+    return function(node['children'], '{0}{1}.'.format(parent, node['name']))
+
+
+types_actions = {
+    ADDED: get_added_message,
+    CHANGED: get_changed_message,
+    DELETED: get_deleted_message,
+    NESTED: get_nested_message,
 }
 
 
 def stringify(node_data: Union[str, int, bool, None, dict]) -> str:
-    """
-    Stringify data.
-
-    Args:
-        node_data: str | int | bool | None | dict
-
-    Returns:
-        str
-    """
+    """Stringify data."""
     if isinstance(node_data, str):
         return "'{0}'".format(node_data)
 
@@ -58,21 +68,15 @@ def stringify(node_data: Union[str, int, bool, None, dict]) -> str:
     )
 
 
-def render(ast: list, path: str) -> str:
-    """
-    Render AST to string.
-
-    Args:
-        ast: list
-        path: str
-
-    Returns:
-        str
-    """
-    filtered = filter(lambda ast_node: types_actions.get(ast_node['type']), ast)
+def render(diff_tree: List[dict], path: str) -> str:
+    """Render diff tree to string."""
+    filtered = filter(
+        lambda diff_node: get_type_action(types_actions, diff_node['type']),
+        diff_tree,
+    )
     output = map(
-        lambda ast_node: types_actions[ast_node['type']](
-            ast_node,
+        lambda diff_node: get_type_action(types_actions, diff_node['type'])(
+            diff_node,
             path,
             render,
         ),

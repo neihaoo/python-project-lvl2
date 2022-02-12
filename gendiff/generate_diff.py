@@ -1,26 +1,25 @@
 """Gendiff Module."""
 
 import os
+from typing import Tuple
 
-from gendiff.build_ast import build_ast_diff
-from gendiff.formaters.render import render
+from gendiff.build_diff_tree import build_diff_tree
+from gendiff.formaters.render import STYLISH, render
 from gendiff.parsers import parse as parse_file
 
-STYLISH = 'stylish'
 
-
-def read_file(path: str) -> tuple:
-    """
-    Prepare input file.
-
-    Args:
-        path: str
-
-    Returns:
-        tuple
-    """
+def read_file(path: str) -> Tuple[str, str]:
+    """Prepare input file."""
     with open(path) as filename:
         _, extension = os.path.splitext(path)
+
+        if extension in {'.yaml', '.yml'}:
+            extension = '.yaml'
+
+        if extension not in {'.yaml', '.json'}:
+            raise ValueError(
+                'The {0} format is not supported.'.format(extension[1:]),
+            )
 
         return (filename.read(), extension[1:])
 
@@ -30,19 +29,9 @@ def generate_diff(
     second_file: str,
     format_name: str = STYLISH,
 ) -> str:
-    """
-    Generate diff between two files.
-
-    Args:
-        first_file: str
-        second_file: str
-        format_name: str
-
-    Returns:
-        str
-    """
+    """Generate diff between two files."""
     first = parse_file(*read_file(first_file))
     second = parse_file(*read_file(second_file))
-    ast = build_ast_diff(first, second)
+    diff = build_diff_tree(first, second)
 
-    return render(ast, format_name)
+    return render(diff, format_name)
