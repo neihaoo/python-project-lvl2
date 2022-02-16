@@ -13,14 +13,6 @@ def read_file(path: str) -> Tuple[str, str]:
     with open(path) as filename:
         _, extension = os.path.splitext(path)
 
-        if extension in {'.yaml', '.yml'}:
-            extension = '.yaml'
-
-        if extension not in {'.yaml', '.json'}:
-            raise ValueError(
-                'The {0} format is not supported.'.format(extension[1:]),
-            )
-
         return (filename.read(), extension[1:])
 
 

@@ -68,19 +68,23 @@ def stringify(node_data: Union[str, int, bool, None, dict]) -> str:
     )
 
 
-def render(diff_tree: List[dict], path: str) -> str:
-    """Render diff tree to string."""
-    filtered = filter(
-        lambda diff_node: get_type_action(types_actions, diff_node['type']),
-        diff_tree,
-    )
-    output = map(
-        lambda diff_node: get_type_action(types_actions, diff_node['type'])(
-            diff_node,
-            path,
-            render,
-        ),
-        filtered,
-    )
+def render(tree: List[dict]) -> str:
+    """Render diff to string."""
 
-    return '\n'.join(output)
+    def walk(diff_tree: List[dict], path: str) -> str:
+        filtered = filter(
+            lambda diff_node: get_type_action(types_actions, diff_node['type']),
+            diff_tree,
+        )
+        output = map(
+            lambda diff_node: get_type_action(types_actions, diff_node['type'])(
+                diff_node,
+                path,
+                walk,
+            ),
+            filtered,
+        )
+
+        return '\n'.join(output)
+
+    return walk(tree, '')

@@ -12,14 +12,11 @@ STYLISH = 'stylish'
 
 formats = {
     JSON: json.dumps,
-    PLAIN: lambda tree: plain_render(tree, ''),
-    STYLISH: lambda tree: stylish_render(tree, 1),
+    PLAIN: plain_render,
+    STYLISH: stylish_render,
 }
 
 
-def render(
-    ast: List[dict],
-    format_name: str = STYLISH,
-) -> str:
+def render(ast: List[dict], format_name: str) -> str:
     """Return the formatter based on the specified format."""
     return formats[format_name](ast)

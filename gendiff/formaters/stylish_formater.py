@@ -107,19 +107,23 @@ def format_node(
     )
 
 
-def render(diff: List[dict], indent_size: int = 0) -> str:
-    """Render AST to string."""
-    output = map(
-        lambda diff_node: get_type_action(types_actions, diff_node['type'])(
-            diff_node,
-            indent_size,
-            diff_node['type'],
-            render,
-        ),
-        diff,
-    )
+def render(tree: List[dict]) -> str:
+    """Render diff to string."""
 
-    return '{{\n{0}\n{1}}}'.format(
-        '\n'.join(output),
-        set_indent(indent_size - 1),
-    )
+    def walk(diff_tree: List[dict], indent_size: int = 0) -> str:
+        output = map(
+            lambda diff_node: get_type_action(types_actions, diff_node['type'])(
+                diff_node,
+                indent_size,
+                diff_node['type'],
+                walk,
+            ),
+            diff_tree,
+        )
+
+        return '{{\n{0}\n{1}}}'.format(
+            '\n'.join(output),
+            set_indent(indent_size - 1),
+        )
+
+    return walk(tree, 1)
