@@ -19,4 +19,9 @@ formats = {
 
 def render(ast: List[dict], format_name: str) -> str:
     """Return the formatter based on the specified format."""
+    if not formats.get(format_name):
+        raise ValueError(
+            'The unknown format of output ({0}).'.format(format_name),
+        )
+
     return formats[format_name](ast)
