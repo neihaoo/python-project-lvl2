@@ -111,14 +111,14 @@ def render(tree: List[dict]) -> str:
     """Render diff to string."""
 
     def walk(diff_tree: List[dict], indent_size: int = 0) -> str:
-        output = map(
-            lambda diff_node: get_type_action(types_actions, diff_node['type'])(
+        output = (
+            get_type_action(types_actions, diff_node['type'])(
                 diff_node,
                 indent_size,
                 diff_node['type'],
                 walk,
-            ),
-            diff_tree,
+            )
+            for diff_node in diff_tree
         )
 
         return '{{\n{0}\n{1}}}'.format(

@@ -44,9 +44,9 @@ def build_diff_tree(first: dict, second: dict) -> list:
     """Build diff between two dictionaries."""
     uniq_keys = sorted(first.keys() | second.keys())
 
-    ast = map(
-        lambda key: build_tree_node(key, first, second, build_diff_tree),
-        uniq_keys,
+    ast = (
+        build_tree_node(key, first, second, build_diff_tree)
+        for key in uniq_keys
     )
 
     return list(ast)

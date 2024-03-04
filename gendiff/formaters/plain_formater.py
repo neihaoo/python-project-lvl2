@@ -76,13 +76,13 @@ def render(tree: List[dict]) -> str:
             lambda diff_node: get_type_action(types_actions, diff_node['type']),
             diff_tree,
         )
-        output = map(
-            lambda diff_node: get_type_action(types_actions, diff_node['type'])(
+        output = (
+            get_type_action(types_actions, diff_node['type'])(
                 diff_node,
                 path,
                 walk,
-            ),
-            filtered,
+            )
+            for diff_node in filtered
         )
 
         return '\n'.join(output)
